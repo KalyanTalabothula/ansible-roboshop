@@ -39,7 +39,7 @@
   # remote_src: yes means files already exist in cart server
   
   - name: now unzipping the downloaded file to extract cart code
-    ansible.buitlin.unarchive:
+    ansible.builtin.unarchive:
       src: /tmp/cart.zip
       dest: /app
       remote_src: yes
