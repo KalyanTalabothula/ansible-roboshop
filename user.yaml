@@ -39,7 +39,7 @@
   # remote_src: yes means files already exist in user server
   
   - name: now unzipping the downloaded file to extract user code
-    ansible.buitin.unarchive:
+    ansible.builtin.unarchive:
       src: /tmp/user.zip
       dest: /app
       remote_src: yes
