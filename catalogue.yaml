@@ -1,4 +1,4 @@
-- name: configure catalogue microservice 
+- name: configure catalogue microservice/component
   hosts: catalogue
   become: yes
   tasks:
@@ -8,28 +8,32 @@
   - name: enable the nodejs:20 -y
     ansible.builtin.command: dnf module enable nodejs:20 -y
 
-  - name: Install the node js
+  - name: Install the nodejs
     ansible.builtin.package:
       name: nodejs
       state: present
 
-  - name: run with non-rootuser because of security
+  - name: because of security running with non-rootuser and creating system user 
     ansible.builtin.user:
       name: roboshop
-      path: /app
+      home: /app
       shell: /sbin/nologin
+      system: true
 
   - name: creating a directory
     ansible.builtin.file:
       name: /app
       state: directory
 
-  - name: downloading the catalogue application
+  - name: downloading the catalogue application code
     ansible.builtin.get_url:
       url: https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip 
       dest: /tmp/catalogue.zip
 
-  - name: now unzipping the downloaded file
+  # this module thinks file exist on ansible control server, needs to extract on to remote machine
+  # remote_src: yes means files already exist in catalogue server
+  
+  - name: now unzipping the downloaded file to extract catalogue code
     ansible:buitin.unarchive:
       src: /tmp/catalogue.zip
       dest: /app
@@ -45,7 +49,7 @@
       dest: /etc/systemd/system/catalogue.service  # etc lo systemd ane folder lo system lo ee catalogue.service pedutunnam
 
   - name: Running the daemon reload because when ever we are making any change's in systemd folder 
-    ansible.builtin.systemd:
+    ansible.builtin.systemd_service:
       daemon_reload: true
 
   - name: Enable catalogue
@@ -63,7 +67,6 @@
       src: mongo.repo
       dest: /etc/yum.repos.d/mongo.repo
 
-
   - name: Install mongodb client to run the products 
     ansible:builtin:package:
       name: mongodb-mongosh
@@ -77,6 +80,7 @@
     ansible.builtin.debug:
       msg: "{{ catalogue_output }}"
 
+  # why shell command means, shell command only allows redirections, variables, pips, and inputs.
   - name: load products
-    ansible.builtin.shell: mongosh --host mongodb.daws84s.site < /app/db/master-data.js
+    ansible.builtin.shell: mongosh --host mongodb.kalyanu.xyz < /app/db/master-data.js
     when: catalogue_output.stdout | int < 0
