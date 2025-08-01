@@ -1,5 +1,3 @@
-# dnf module list nginx
-
 - name: configuring the web/frontend component
   hosts: frontend
   become: yes
