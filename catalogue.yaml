@@ -39,7 +39,7 @@
   # remote_src: yes means files already exist in catalogue server
   
   - name: now unzipping the downloaded file to extract catalogue code
-    ansible:buitin.unarchive:
+    ansible:builtin.unarchive:
       src: /tmp/catalogue.zip
       dest: /app
       remote_src: yes
