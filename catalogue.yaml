@@ -49,7 +49,7 @@
       path: /app
 
   - name: To run our custom microservice we need dot service file
-    ansible:builtin.copy:
+    ansible.builtin.copy:
       src: catalogue.service
       dest: /etc/systemd/system/catalogue.service  # etc lo systemd ane folder lo system lo ee catalogue.service pedutunnam
 
