@@ -31,7 +31,7 @@
   - name: keeping our roboshop content on html page
     ansible.builtin.file:
       path: /usr/share/nginx/html
-      state: present
+      state: directory
 
   - name: Downloading our frontend code
     ansible.builtin.get_url:
