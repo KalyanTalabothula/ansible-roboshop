@@ -1,0 +1,68 @@
+- name: configure cart microservice/component
+  hosts: cart
+  become: yes
+  tasks:
+  - name: disable the default nodejs 
+    ansible.builtin.command: dnf module disable nodejs -y
+
+  - name: enable the nodejs:20 -y
+    ansible.builtin.command: dnf module enable nodejs:20 -y
+
+  - name: Install the nodejs
+    ansible.builtin.package:
+      name: nodejs
+      state: present
+
+  - name: creating a directory
+    ansible.builtin.file:
+      name: /app
+      state: directory
+
+  - name: because of security running with non-rootuser and creating system user 
+    ansible.builtin.user:
+      name: roboshop
+      home: /app
+      shell: /sbin/nologin
+      system: true
+
+  # - name: creating a directory
+  #   ansible.builtin.file:
+  #     name: /app
+  #     state: directory
+
+  - name: downloading the cart application code
+    ansible.builtin.get_url:
+      url: https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip 
+      dest: /tmp/cart.zip
+
+  # this module thinks file exist on ansible control server, needs to extract on to remote machine
+  # remote_src: yes means files already exist in cart server
+  
+  - name: now unzipping the downloaded file to extract cart code
+    ansible:buitin.unarchive:
+      src: /tmp/cart.zip
+      dest: /app
+      remote_src: yes
+
+  - name: Install dependencies and libraries
+    community.general.npm:
+      path: /app
+
+  - name: To run our custom microservice we need dot service file
+    ansible:builtin.copy:
+      src: cart.service
+      dest: /etc/systemd/system/cart.service  # etc lo systemd ane folder lo system lo ee cart.service pedutunnam
+
+  - name: Running the daemon reload because when ever we are making any change's in systemd folder 
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+
+  - name: Enable cart
+    ansible:builtin:service:
+      name: cart
+      enabled: yes
+
+  - name: start cart
+    ansible:builtin:service:
+      name: cart
+      state: started

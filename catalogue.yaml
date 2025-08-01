@@ -13,6 +13,11 @@
       name: nodejs
       state: present
 
+  - name: creating a directory
+    ansible.builtin.file:
+      name: /app
+      state: directory
+
   - name: because of security running with non-rootuser and creating system user 
     ansible.builtin.user:
       name: roboshop
@@ -20,10 +25,10 @@
       shell: /sbin/nologin
       system: true
 
-  - name: creating a directory
-    ansible.builtin.file:
-      name: /app
-      state: directory
+  # - name: creating a directory
+  #   ansible.builtin.file:
+  #     name: /app
+  #     state: directory
 
   - name: downloading the catalogue application code
     ansible.builtin.get_url:
