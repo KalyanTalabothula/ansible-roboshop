@@ -54,4 +54,27 @@
   - name: downloading the shipping application code in to app directory
     ansible.builtin.get_url:
       url: https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip 
+      dest: /tmp/shipping.zip 
 
+  - name: unarchive/Extract the downloaded file
+    ansible.builtin.unarchive:
+      src: /tmp/shipping.zip 
+      dest: /app
+      remote_src: yes
+
+  - name: To run the code we need librarices and dependencies, that's why we are installing maven
+    ansible.builtin.command: mvn clean package
+    args:
+      chdir: /app
+
+  - name: rename jar file
+    ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
+    args:
+      chdir: /app
+
+  - name: we need dot service file, due to our custmized application
+    ansible.builtin.copy:
+      src: shipping.service
+      dest: /etc/systemd/system/shipping.service
+
+  
