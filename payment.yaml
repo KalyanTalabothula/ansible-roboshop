@@ -45,5 +45,22 @@
       chdir: /app
 
   - name: Service file, to Start, run, restarted, and enabled
-    ansible.builtin.systemd_service:
-      name: 
+    ansible.builtin.copy:
+      src: payment.service
+      dest: /etc/systemd/system/payment.service
+
+  - name: If we do any changes in systemd we need to do daemon-reload
+    ansible.builtin.system_service:
+      daemon_reload: true
+
+  - name: Enable the payment server
+    ansible.builtin.service:
+      name: payment
+      enabled: yes
+
+  - name: Start the payment server
+    ansible.builtin.service:
+      name: payment
+      state: started 
+
+      
