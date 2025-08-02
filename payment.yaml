@@ -2,7 +2,7 @@
   hosts: payment
   become: yes
   tasks: 
-  - name: Install python3, gcc, and python3-devel
+  - name: Install python3, gcc, and python3-devel all packages
     ansible.builtin.package: 
       name: "{{ item }}"
       state: present
@@ -16,7 +16,7 @@
       name: /app
       state: directory
 
-  - name: create a user, to run without root user for safety
+  - name: create a roboshop system user, to run without root user for safety
     ansible.built.user: 
       name: roboshop
       system: true
@@ -33,18 +33,20 @@
       url: https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip 
       dest: /tmp/payment.zip
 
-  - name: Unarchive the downloaded zip file 
+  - name: Unarchive/Extract the payment code
     ansible.builtin.unarchive:
       src: /tmp/payment.zip
       dest: /app
       remote_src: yes 
 
   - name: Install Dependencies & Libraries
-    ansible.builtin.command: pip3 install
+    ansible.builtin.pip:
+      requirements: requirements.txt
+      executable: pip3.9   # <-- carefull here, Devloper has given or mentioned
     arg:
       chdir: /app
 
-  - name: Service file, to Start, run, restarted, and enabled
+  - name: Copy payment service file, to Start, run, restarted, and enabled
     ansible.builtin.copy:
       src: payment.service
       dest: /etc/systemd/system/payment.service
