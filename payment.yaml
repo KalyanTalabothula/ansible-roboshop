@@ -1,0 +1,35 @@
+- name: setup payment component in server
+  hosts: payment
+  become: yes
+  tasks: 
+  - name: Install python3, gcc, and python3-devel
+    ansible.builtin.package: 
+      name: "{{ item }}"
+      state: present
+    loop:
+      - python3
+      - gcc
+      - python3-devel
+
+  - name: create a /app directory
+    ansible.builtin.file:
+      name: /app
+      state: directory
+
+  - name: create a user, to run without root user for safety
+    ansible.built.user: 
+      name: roboshop
+      system: true
+      home: /app
+      shell: /sbin/nologin
+
+  # - name: create a /app directory
+  #   ansible.builtin.file:
+  #     name: /app
+  #     state: directory
+
+  - name: downloading the payment code 
+    ansible.builtin.get_url:
+      url: https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip 
+      dest: /tmp/payment.zip
+
