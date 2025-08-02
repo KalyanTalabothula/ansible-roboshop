@@ -24,8 +24,8 @@
   
   
   - name: install PyMySQL and cryptography 
-    ansible.builtin.pip:
-      name: "{{ item }}"
+    ansible.builtin.pip:     # .pip <---- because these are dependencies, not packages 
+      name: "{{ item }}"     # ansible build by python 
       executable: pip3.9
     loop:
     - cryptography
@@ -80,7 +80,7 @@
     args:
       chdir: /app
 
-  - name: rename jar file
+  - name: After Installation we are rename jar file
     ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
     args:
       chdir: /app
@@ -116,3 +116,30 @@
   #     login_password: RoboShop@1
   #     login_host: mysql.daws84s.site
   #     login_db: cities
+
+# import data ante load cheyapote load chestumdhi, oka vela load chesi unte inak load cheyadu
+
+  - name: import data 
+    tags: 
+    - import
+    community.mysql.mysql_db:
+      name: all 
+      login_user: root 
+      login_password: Roboshop@1
+      login_host: mysql.kalyanu.xyz
+      state: import
+      target: "{{ item }}"  # target manaki chala unne load cheyataniki, andhuke manam loop chestunnam
+    loop:
+    - /app/db/schema.sql
+    - /app/db/app-user.sql 
+    - /app/db/master-data.sql
+
+  - name: restart shipping
+    tags:
+    - import
+    ansible.builtin.service:
+      state: restared
+      name: shipping
+
+
+
