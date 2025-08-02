@@ -1,0 +1,78 @@
+# dnf module disable redis -y
+# dnf module enable redis:7 -y
+
+# MySQL
+# Developer has chosen the database MySQL. Hence, we are trying to install it up and configure it.
+
+# CentOS-8 Comes with MySQL 8 Version by default, However our application needs MySQL 5.7. So lets disable MySQL 8 version.
+
+# dnf module disable mysql -y
+
+# Setup the MySQL5.7 repo file
+# vim /etc/yum.repos.d/mysql.repo
+
+# [mysql]
+# name=MySQL 5.7 Community Server
+# baseurl=http://repo.mysql.com/yum/mysql-5.7-community/el/7/$basearch/
+# enabled=1
+# gpgcheck=0
+
+# Install MySQL Server
+
+# dnf install mysql-community-server -y
+
+# Check version availability: By giving this command in server --> yum info mysql-server
+
+- name: Configuring the Mysql DB in server
+  hosts: mysql
+  become: yes
+  tasks:
+  - name: Installing mysql application IN server
+    ansible.buitltin.package:
+      name: mysql-server
+      state: present # No difference between installed and present, both are same.
+
+  - name: Enable mysql
+    ansible.builtin.service: 
+      name: mysqld
+      enabled: yes
+
+  - name: Start mysql
+    ansible.builtin.service:
+      name: mysqld
+      state: started
+
+#   🔐 Reason in Telugu:
+# 1. MySQL lo root user ki default ga password undakapovachu.
+    # Ante, mysql -u root ani command vesi enter aipotav.
+    # Idi dangerous, endukante yevvaraina system lo access unte, database ni open cheyyagalru.
+
+# 2. Auth method auth_socket untundhi (some systems lo):
+    # Dini valla manam password tho login cheyyalem.
+    # So, password-based access setup cheyyali.
+
+# 3. Security kosam mysql_secure_installation command use chestham.
+    # Idi password set chesthadi.
+    # Anonymous users remove chesthadi.
+    # Test database ni delete chesthadi.
+    # Root login ni remote nunchi block chesthadi.
+
+# 📝 MySQL Root Password Setup - Simple Note
+# 📌 Why we use mysql_secure_installation --set-root-pass RoboShop@1:
+
+# ✅ MySQL install chesaka, default ga root user ki password undakapovachu.
+      # That is risky. Yevvaraina system access vunte DB open cheyyachu.
+
+# 🔐 So, manam root ki oka strong password set cheyyali.
+      # Example: RoboShop@1
+
+# ⚙️ mysql_secure_installation ane command ni use chestham.
+
+      # Manual ga questions adugutadi usually.
+      # But --set-root-pass use chesthe non-interactive ga password set avutundi.
+
+
+  - name: set root password
+    ansible.builtin.command: mysql_secure_installation --set-root-pass RoboShop@1
+
+# why not shell ? becasue we are not having any redirections.
