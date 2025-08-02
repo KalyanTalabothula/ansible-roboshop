@@ -39,4 +39,11 @@
       dest: /app
       remote_src: yes 
 
-  
+  - name: Install Dependencies & Libraries
+    ansible.builtin.command: pip3 install
+    arg:
+      chdir: /app
+
+  - name: Service file, to Start, run, restarted, and enabled
+    ansible.builtin.systemd_service:
+      name: 
