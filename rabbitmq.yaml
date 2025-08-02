@@ -7,17 +7,17 @@
       src: rabbitmq.repo
       dest: /etc/yum.repos.d/rabbitmq.repo
 
-  - name: Install Rabbitmq database in server
+  - name: Install Rabbitmq server in database
     ansible.builtin.package:
       name: rabbitmq-server
       state: present
   
-  - name: Enable Rabbitmq database in server
+  - name: Enable Rabbitmq server in database
     ansible.buitln.service:
       name: rabbitmq-server
       enabled: yes
 
-  - name: Start Rabbitmq database in server
+  - name: Start Rabbitmq server in databaase 
     ansible.buitln.service:
       name: rabbitmq-server
       state: started
