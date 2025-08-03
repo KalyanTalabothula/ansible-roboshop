@@ -17,7 +17,7 @@
       state: directory
 
   - name: create a roboshop system user, to run without root user for safety
-    ansible.built.user: 
+    ansible.builtin.user: 
       name: roboshop
       system: true
       home: /app
