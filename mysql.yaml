@@ -28,7 +28,7 @@
   become: yes
   tasks:
   - name: Installing mysql application IN server
-    ansible.buitltin.package:
+    ansible.builtin.package:
       name: mysql-server
       state: present # No difference between installed and present, both are same.
 
