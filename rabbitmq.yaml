@@ -13,12 +13,12 @@
       state: present
   
   - name: Enable Rabbitmq server in database
-    ansible.buitln.service:
+    ansible.builtin.service:
       name: rabbitmq-server
       enabled: yes
 
   - name: Start Rabbitmq server in databaase 
-    ansible.buitln.service:
+    ansible.builtin.service:
       name: rabbitmq-server
       state: started
 
@@ -29,12 +29,12 @@
   - name: create Rabbitmq user
     # Add user to server and assign full access control on / vhost.
     # The user doesn't have permission rules for other vhosts
-  community.rabbitmq.rabbitmq_user:
-    user: roboshop
-    password: roboshop123
-    permissions:
-      - vhost: /
-        configure_priv: .*
-        read_priv: .*
-        write_priv: .*
-    state: present
+    community.rabbitmq.rabbitmq_user:
+      user: roboshop
+      password: roboshop123
+      permissions:
+        - vhost: /
+          configure_priv: .*
+          read_priv: .*
+          write_priv: .*
+      state: present
