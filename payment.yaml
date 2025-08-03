@@ -52,7 +52,7 @@
       dest: /etc/systemd/system/payment.service
 
   - name: If we do any changes in systemd we need to do daemon-reload
-    ansible.builtin.system_service:
+    ansible.builtin.systemd_service:
       daemon_reload: true
 
   - name: Enable the payment server
