@@ -120,7 +120,7 @@
 # import data ante load cheyapote load chestumdhi, oka vela load chesi unte inak load cheyadu
 
   - name: import data 
-    tags: 
+    tags:                 # <-- tags used for, if you want to run only one task only, not all so we can use tags
       - import
     community.mysql.mysql_db:
       name: all 
